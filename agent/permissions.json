@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "description": "Claude Code agent permissions for devops-agent-demo",
+
+  "allow": {
+    "read": ["**/*"],
+    "write": ["agent/logs/**", "agent/scenarios/**"],
+    "bash": [
+      "git status",
+      "git diff",
+      "git log",
+      "git checkout",
+      "git add",
+      "git commit",
+      "git push",
+      "git worktree",
+      "mvn",
+      "./mvnw",
+      "docker build",
+      "docker compose",
+      "docker ps",
+      "docker logs",
+      "act",
+      "cat",
+      "ls",
+      "find",
+      "grep",
+      "echo",
+      "mkdir",
+      "cp",
+      "mv"
+    ]
+  },
+
+  "deny": {
+    "bash": [
+      "rm -rf",
+      "curl",
+      "wget",
+      "ssh",
+      "sudo",
+      "chmod",
+      "chown",
+      "apt",
+      "npm install",
+      "pip install"
+    ],
+    "write": [
+      ".github/workflows/**",
+      "src/main/**"
+    ],
+    "branches": ["master", "develop"]
+  },
+
+  "sandbox": {
+    "working_branch_pattern": "experiment/*",
+    "max_iterations": 5,
+    "require_checkpoint": true,
+    "checkpoints": ["CP1_DIAGNOSIS", "CP2_PATCH_APPROVED"]
+  }
+}
