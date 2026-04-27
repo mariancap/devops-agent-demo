@@ -111,6 +111,7 @@ def run(scenario_id: str, log_dir: str, system_prompt_path: str, dry_run: bool):
         )
 
         # ── Stream output line by line ───────────────────────────────────
+        assert process.stdout is not None, "stdout should be PIPE"
         for raw_line in process.stdout:
             line = raw_line.rstrip()
 
