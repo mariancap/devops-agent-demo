@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//workspace/**)",
+      "Bash(find / -maxdepth 5 -name \"permissions.json\")",
+      "mcp__devops-agent__write_audit_event"
+    ]
+  }
+}
