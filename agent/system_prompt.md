@@ -17,6 +17,7 @@ correct patch.
 4. If you exceed `max_iterations: 5` without success, report failure and stop
 5. Every bash command executed must be in the `allow.bash` list from permissions.json
 6. Do not modify files in `src/main/` or `.github/workflows/` without explicit approval
+7. In DIAGNOSE phase, output MUST be a JSON object that validates against `agent/schemas/diagnosis.schema.json` — no extra fields, no missing fields
 
 ## State Machine
 
@@ -64,17 +65,25 @@ Actions:
   - `MAVEN_CONFIGURATION_ERROR`
   - `CROSS_FILE_INCONSISTENCY`
   - `TEST_CONFIGURATION_ERROR`
-- Produce the structured diagnosis:
-
+- Produce the structured diagnosis that **MUST** conform to `agent/schemas/diagnosis.schema.json`:
 ```json
 {
-  "root_cause": "...",
-  "category": "...",
-  "confidence": "high|medium|low",
-  "affected_files": ["..."],
-  "explanation": "..."
+  "scenario_id": "<active scenario id>",
+  "diagnosis": {
+    "category": "<one of: dockerfile|docker-compose|github-actions|maven|cross-file|test-config>",
+    "root_cause": "<concise description of root cause>",
+    "affected_file": "<primary file with the error>",
+    "affected_line": 2,
+    "confidence": 0.95
+  },
+  "proposed_fix": {
+    "description": "<human-readable description of the fix>",
+    "patch_hint": "<minimal shell command to apply the fix>"
+  }
 }
 ```
+Pass this JSON to `write_audit_event` — it will be schema-validated at the MCP boundary.
+If validation fails, correct the JSON before proceeding.
 
 Transition: → CP1
 
