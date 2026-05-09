@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
 MCP Server pentru DevOps Agent Demo
-Tool-uri: get_job_logs, write_audit_event, run_static_check, request_approval, run_validation
+Tool-uri: get_job_logs, write_audit_event, run_static_check,
+          request_approval, run_validation, apply_patch, get_diff
 """
 
 import asyncio
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -15,15 +17,12 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
-# Directorul rădăcină al repo-ului (părintele directorului mcp/)
-REPO_ROOT = Path(__file__).parent.parent
+REPO_ROOT   = Path(__file__).parent.parent
+WORKTREE_PATH = REPO_ROOT / ".patch-worktree"
 
 app = Server("devops-agent-mcp")
 
 
-# ─────────────────────────────────────────────
-# Tool 1: get_job_logs
-# ─────────────────────────────────────────────
 @app.list_tools()
 async def list_tools() -> list[Tool]:
     return [
@@ -128,13 +127,44 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": []
             }
-        )
+        ),
+        Tool(
+            name="apply_patch",
+            description=(
+                "Creează un git worktree izolat și aplică patch_hint-ul din diagnoză. "
+                "Worktree-ul e la .patch-worktree/ față de rădăcina repo-ului. "
+                "Returnează success/failure și output-ul comenzii."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "patch_hint": {
+                        "type": "string",
+                        "description": "Comanda shell de aplicat (din câmpul proposed_fix.patch_hint al diagnozei)"
+                    },
+                    "scenario_id": {
+                        "type": "string",
+                        "description": "ID-ul scenariului activ (folosit doar pentru audit)"
+                    }
+                },
+                "required": ["patch_hint", "scenario_id"]
+            }
+        ),
+        Tool(
+            name="get_diff",
+            description=(
+                "Returnează git diff --stat + diff complet din worktree-ul de patch. "
+                "Apelează după apply_patch, înainte de CP2."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        ),
     ]
 
 
-# ─────────────────────────────────────────────
-# Handler tool-uri
-# ─────────────────────────────────────────────
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
@@ -166,7 +196,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         event_type = arguments["event_type"]
         payload    = arguments["payload"]
 
-        # Schema validation for DIAGNOSIS events
         if event_type == "DIAGNOSIS":
             import jsonschema as _js
             schema_path = REPO_ROOT / "agent" / "schemas" / "diagnosis.schema.json"
@@ -183,7 +212,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                          + "\nCorrect your JSON and retry."
                 )]
 
-        log_dir = REPO_ROOT / "agent" / "logs"
+        log_dir  = REPO_ROOT / "agent" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
         log_file = log_dir / "audit.jsonl"
         event = {
@@ -194,6 +223,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         with open(log_file, "a") as f:
             f.write(json.dumps(event) + "\n")
         return [TextContent(type="text", text=f"✅ Eveniment scris: {event_type}")]
+
     # ── run_static_check ──────────────────────
     elif name == "run_static_check":
         checks  = arguments["checks"]
@@ -209,7 +239,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     "exit_code": r.returncode,
                     "output": r.stdout + r.stderr or "✅ Nicio problemă găsită"
                 }
-
             elif check == "actionlint":
                 r = subprocess.run(
                     ["actionlint"],
@@ -220,7 +249,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                     "exit_code": r.returncode,
                     "output": r.stdout + r.stderr or "✅ Nicio problemă găsită"
                 }
-
             elif check == "mvn_validate":
                 r = subprocess.run(
                     ["./mvnw", "validate", "-q"],
@@ -240,15 +268,28 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         summary    = arguments["summary"]
         details    = arguments.get("details", {})
 
+        # La CP2 injectăm automat diff-ul dacă worktree-ul există
+        if checkpoint == "CP2" and WORKTREE_PATH.exists():
+            diff_result = subprocess.run(
+                ["git", "diff"],
+                capture_output=True, text=True,
+                cwd=str(WORKTREE_PATH)
+            )
+            if diff_result.stdout.strip():
+                details["diff"] = diff_result.stdout
+
         print(f"\n{'='*60}", flush=True)
         print(f"🔴 CHECKPOINT {checkpoint} — APROBARE NECESARĂ", flush=True)
         print(f"{'='*60}", flush=True)
         print(f"\n📋 Rezumat: {summary}\n", flush=True)
         if details:
-            print(f"📎 Detalii:\n{json.dumps(details, indent=2)}\n", flush=True)
+            if "diff" in details:
+                print(f"📄 Diff:\n{details['diff']}", flush=True)
+            other = {k: v for k, v in details.items() if k != "diff"}
+            if other:
+                print(f"📎 Detalii:\n{json.dumps(other, indent=2)}\n", flush=True)
         print(f"{'='*60}", flush=True)
 
-        # Scrie și în audit log
         log_dir  = REPO_ROOT / "agent" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
         log_file = log_dir / "audit.jsonl"
@@ -260,7 +301,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         with open(log_file, "a") as f:
             f.write(json.dumps(event) + "\n")
 
-        # Citește răspunsul de la utilizator
         loop = asyncio.get_event_loop()
         answer = await loop.run_in_executor(
             None,
@@ -270,8 +310,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         approved = answer in ("y", "yes", "da")
         status   = "APPROVED" if approved else "REJECTED"
 
-        # Update audit log cu decizia
-        event["payload"]["status"] = status
         with open(log_file, "a") as f:
             f.write(json.dumps({
                 "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -279,10 +317,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 "payload": {"decision": status}
             }) + "\n")
 
-        return [TextContent(
-            type="text",
-            text=f"{checkpoint}: {status}"
-        )]
+        return [TextContent(type="text", text=f"{checkpoint}: {status}")]
 
     # ── run_validation ────────────────────────
     elif name == "run_validation":
@@ -304,13 +339,99 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             "stderr_tail": result.stderr[-500:] if result.stderr else ""
         }, indent=2))]
 
+    # ── apply_patch ───────────────────────────
+    elif name == "apply_patch":
+        patch_hint  = arguments["patch_hint"]
+        scenario_id = arguments["scenario_id"]
+
+        # Curățăm worktree-ul vechi dacă există
+        if WORKTREE_PATH.exists():
+            subprocess.run(
+                ["git", "worktree", "remove", "--force", str(WORKTREE_PATH)],
+                cwd=str(REPO_ROOT), capture_output=True
+            )
+            if WORKTREE_PATH.exists():
+                shutil.rmtree(WORKTREE_PATH)
+
+        # Creăm worktree nou pe branch-ul curent
+        wt_result = subprocess.run(
+            ["git", "worktree", "add", str(WORKTREE_PATH), "HEAD"],
+            capture_output=True, text=True,
+            cwd=str(REPO_ROOT)
+        )
+        if wt_result.returncode != 0:
+            return [TextContent(type="text", text=json.dumps({
+                "success": False,
+                "error": "Nu s-a putut crea worktree",
+                "stderr": wt_result.stderr
+            }))]
+
+        # Aplicăm patch_hint în worktree
+        patch_result = subprocess.run(
+            patch_hint,
+            shell=True,
+            capture_output=True, text=True,
+            cwd=str(WORKTREE_PATH)
+        )
+
+        success = patch_result.returncode == 0
+
+        # Audit
+        log_dir  = REPO_ROOT / "agent" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_dir / "audit.jsonl", "a") as f:
+            f.write(json.dumps({
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "event_type": "PATCH_APPLIED",
+                "payload": {
+                    "scenario_id": scenario_id,
+                    "patch_hint": patch_hint,
+                    "success": success,
+                    "stdout": patch_result.stdout,
+                    "stderr": patch_result.stderr,
+                    "worktree": str(WORKTREE_PATH)
+                }
+            }) + "\n")
+
+        return [TextContent(type="text", text=json.dumps({
+            "success": success,
+            "patch_hint": patch_hint,
+            "stdout": patch_result.stdout,
+            "stderr": patch_result.stderr,
+            "worktree": str(WORKTREE_PATH)
+        }, indent=2))]
+
+    # ── get_diff ──────────────────────────────
+    elif name == "get_diff":
+        if not WORKTREE_PATH.exists():
+            return [TextContent(type="text", text=json.dumps({
+                "success": False,
+                "error": "Worktree-ul nu există. Apelează apply_patch mai întâi."
+            }))]
+
+        stat_result = subprocess.run(
+            ["git", "diff", "--stat"],
+            capture_output=True, text=True,
+            cwd=str(WORKTREE_PATH)
+        )
+        diff_result = subprocess.run(
+            ["git", "diff"],
+            capture_output=True, text=True,
+            cwd=str(WORKTREE_PATH)
+        )
+
+        has_changes = bool(diff_result.stdout.strip())
+
+        return [TextContent(type="text", text=json.dumps({
+            "has_changes": has_changes,
+            "stat": stat_result.stdout,
+            "diff": diff_result.stdout
+        }, indent=2))]
+
     else:
         return [TextContent(type="text", text=f"ERROR: tool necunoscut '{name}'")]
 
 
-# ─────────────────────────────────────────────
-# Entry point
-# ─────────────────────────────────────────────
 async def main():
     async with stdio_server() as (read_stream, write_stream):
         await app.run(read_stream, write_stream, app.create_initialization_options())
