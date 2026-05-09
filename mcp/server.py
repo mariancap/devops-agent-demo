@@ -163,20 +163,37 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
     # ── write_audit_event ─────────────────────
     elif name == "write_audit_event":
+        event_type = arguments["event_type"]
+        payload    = arguments["payload"]
+
+        # Schema validation for DIAGNOSIS events
+        if event_type == "DIAGNOSIS":
+            import jsonschema as _js
+            schema_path = REPO_ROOT / "agent" / "schemas" / "diagnosis.schema.json"
+            with open(schema_path) as sf:
+                schema = json.load(sf)
+            try:
+                _js.validate(instance=payload, schema=schema)
+            except _js.ValidationError as ve:
+                return [TextContent(
+                    type="text",
+                    text="❌ SCHEMA VALIDATION FAILED for DIAGNOSIS payload:\n"
+                         + ve.message
+                         + "\nPath: " + str(list(ve.absolute_path))
+                         + "\nCorrect your JSON and retry."
+                )]
+
         log_dir = REPO_ROOT / "agent" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
         log_file = log_dir / "audit.jsonl"
-
         event = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "event_type": arguments["event_type"],
-            "payload": arguments["payload"]
+            "event_type": event_type,
+            "payload": payload
         }
         with open(log_file, "a") as f:
             f.write(json.dumps(event) + "\n")
-
-        return [TextContent(type="text", text=f"✅ Eveniment scris: {arguments['event_type']}")]
-
+        return [TextContent(type="text", text=f"✅ Eveniment scris: {event_type}")]
     # ── run_static_check ──────────────────────
     elif name == "run_static_check":
         checks  = arguments["checks"]
