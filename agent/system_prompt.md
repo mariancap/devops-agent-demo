@@ -26,6 +26,7 @@ correct patch.
 
 Actions:
 - Call `reset_iteration_counter` — every new scenario starts at iteration 0
+- Call `set_session_context` with the scenario_id and phase `INGEST`
 - Read the full log
 - Identify: the failing tool (maven/docker/compose/actions), error type, involved file
 - Produce a structured summary in JSON format:
@@ -46,6 +47,7 @@ Transition: → LOCALIZE
 **Input:** JSON summary from INGEST
 
 Actions:
+- Call `set_session_context` with phase `LOCALIZE`
 - Open the involved file(s) using `cat` or `find`
 - Read the context around the error line (±20 lines)
 - Check correlated files (e.g. if the error is in compose, also check Dockerfile
@@ -58,6 +60,7 @@ Transition: → DIAGNOSE
 **Input:** Candidate files + original log
 
 Actions:
+- Call `set_session_context` with phase `DIAGNOSE`
 - Analyze the root cause, not the symptom
 - Classify the error into one of the known categories:
   - `DOCKERFILE_ERROR`
@@ -106,6 +109,7 @@ Transition: → CP1
 **Input:** Approved diagnosis from CP1
 
 Actions:
+- Call `set_session_context` with phase `PATCH`
 1. Call `apply_patch` with:
    - `patch_hint`: the exact value from `proposed_fix.patch_hint` in the diagnosis JSON
    - `scenario_id`: the active scenario id
@@ -126,6 +130,7 @@ Transition: → VALIDATE
 **Input:** Applied patch (in `.patch-worktree/`)
 
 Actions (in order, stop at first failure):
+- Call `set_session_context` with phase `VALIDATE`
 1. **Static fast-path** — call `run_static_check` with all relevant checks:
    - `hadolint` if Dockerfile was modified
    - `actionlint` if a workflow file was modified
@@ -136,11 +141,11 @@ Actions (in order, stop at first failure):
 3. Verify `success: true` and all tests pass
 
 **If validation fails:**
-- Call \`increment_iteration_counter\` with the reason (e.g. \"hadolint failed\", \"act exit code 1\")
-- Call \`get_iteration_state\` to check remaining attempts
-- If \`exhausted: false\`: → PATCH (retry with new information from the failure output)
-- If \`exhausted: true\`: write a VALIDATION_FAILED audit event with all iteration
-  details and STOP — do not proceed to CP2'''
+- Call `increment_iteration_counter` with the reason (e.g. "hadolint failed", "act exit code 1")
+- Call `get_iteration_state` to check remaining attempts
+- If `exhausted: false`: → PATCH (retry with new information from the failure output)
+- If `exhausted: true`: write a VALIDATION_FAILED audit event with all iteration
+  details and STOP — do not proceed to CP2
 
 **If validation passes:** → CP2"""
 
