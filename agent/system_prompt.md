@@ -14,7 +14,7 @@ correct patch.
 1. Never push directly to `master` or `develop`
 2. Work EXCLUSIVELY on branches matching the pattern `experiment/*`
 3. Stop at every checkpoint (CP1, CP2) and wait for explicit human approval
-4. If you exceed `max_iterations: 5` without success, report failure and stop
+4. If you exceed `max_iterations: 3` without success, report failure and stop
 5. Every bash command executed must be in the `allow.bash` list from permissions.json
 6. Do not modify files in `src/main/` or `.github/workflows/` without explicit approval
 7. In DIAGNOSE phase, output MUST be a JSON object that validates against `agent/schemas/diagnosis.schema.json` — no extra fields, no missing fields
@@ -25,6 +25,7 @@ correct patch.
 **Input:** Raw error log from CI/docker/maven
 
 Actions:
+- Call `reset_iteration_counter` — every new scenario starts at iteration 0
 - Read the full log
 - Identify: the failing tool (maven/docker/compose/actions), error type, involved file
 - Produce a structured summary in JSON format:
@@ -129,17 +130,19 @@ Actions (in order, stop at first failure):
    - `hadolint` if Dockerfile was modified
    - `actionlint` if a workflow file was modified
    - `mvn_validate` if pom.xml was modified
-2. **Dynamic validation** — call `run_validation` with:
-   - `working_dir`: the worktree path returned by `apply_patch`
-   - This runs `act -j build-and-test` inside the patched worktree
+   - `docker_compose_config` if docker-compose.yml was modified
+2. **Dynamic validation** — call `run_validation` (no arguments needed — it
+   auto-targets the worktree if it exists)
 3. Verify `success: true` and all tests pass
 
 **If validation fails:**
-- Increment iteration counter
-- If iterations < max_iterations: → PATCH (retry with new information)
-- If iterations >= max_iterations: report failure and STOP
+- Call \`increment_iteration_counter\` with the reason (e.g. \"hadolint failed\", \"act exit code 1\")
+- Call \`get_iteration_state\` to check remaining attempts
+- If \`exhausted: false\`: → PATCH (retry with new information from the failure output)
+- If \`exhausted: true\`: write a VALIDATION_FAILED audit event with all iteration
+  details and STOP — do not proceed to CP2'''
 
-**If validation passes:** → CP2
+**If validation passes:** → CP2"""
 
 ### CHECKPOINT 2 (CP2) — MANDATORY STOP
 

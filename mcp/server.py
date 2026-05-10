@@ -19,6 +19,7 @@ from mcp.types import Tool, TextContent
 
 REPO_ROOT   = Path(__file__).parent.parent
 WORKTREE_PATH = REPO_ROOT / ".patch-worktree"
+_iteration_state: dict = {"count": 0, "max": 3}
 
 app = Server("devops-agent-mcp")
 
@@ -162,6 +163,37 @@ async def list_tools() -> list[Tool]:
                 "required": []
             }
         ),
+        Tool(
+            name="get_iteration_state",
+            description=(
+                "Returnează numărul curent de iterații de validare și limita maximă. "
+                "Apelează înainte de fiecare retry pentru a verifica dacă mai poți încerca."
+            ),
+            inputSchema={"type": "object", "properties": {}, "required": []}
+        ),
+        Tool(
+            name="reset_iteration_counter",
+            description="Resetează contorul de iterații la 0. Apelează la începutul fiecărui scenariu nou.",
+            inputSchema={"type": "object", "properties": {}, "required": []}
+        ),
+        Tool(
+            name="increment_iteration_counter",
+            description=(
+                "Incrementează contorul de iterații cu 1. "
+                "Apelează după fiecare validation failure (static sau dynamic), "
+                "înainte de a decide dacă reîncerci sau abandonezi."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "Motivul incrementării (ex: 'hadolint failed', 'act exit code 1')"
+                    }
+                },
+                "required": ["reason"]
+            }
+        ),
     ]
 
 
@@ -229,38 +261,64 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         checks  = arguments["checks"]
         results = {}
 
+        # Rulează în worktree dacă există, altfel în repo root
+        target_dir = WORKTREE_PATH if WORKTREE_PATH.exists() else REPO_ROOT
+
         for check in checks:
             if check == "hadolint":
+                dockerfile = target_dir / "Dockerfile"
+                if not dockerfile.exists():
+                    results["hadolint"] = {"exit_code": 1, "output": f"ERROR: Dockerfile nu există în {target_dir}"}
+                    continue
                 r = subprocess.run(
-                    ["hadolint", str(REPO_ROOT / "Dockerfile")],
+                    ["hadolint", str(dockerfile)],
                     capture_output=True, text=True
                 )
                 results["hadolint"] = {
                     "exit_code": r.returncode,
-                    "output": r.stdout + r.stderr or "✅ Nicio problemă găsită"
+                    "output": (r.stdout + r.stderr).strip() or "✅ Nicio problemă găsită"
                 }
             elif check == "actionlint":
                 r = subprocess.run(
                     ["actionlint"],
                     capture_output=True, text=True,
-                    cwd=str(REPO_ROOT)
+                    cwd=str(target_dir)
                 )
                 results["actionlint"] = {
                     "exit_code": r.returncode,
-                    "output": r.stdout + r.stderr or "✅ Nicio problemă găsită"
+                    "output": (r.stdout + r.stderr).strip() or "✅ Nicio problemă găsită"
                 }
             elif check == "mvn_validate":
                 r = subprocess.run(
                     ["./mvnw", "validate", "-q"],
                     capture_output=True, text=True,
-                    cwd=str(REPO_ROOT)
+                    cwd=str(target_dir)
                 )
                 results["mvn_validate"] = {
                     "exit_code": r.returncode,
-                    "output": r.stdout + r.stderr or "✅ POM valid"
+                    "output": (r.stdout + r.stderr).strip() or "✅ POM valid"
+                }
+            elif check == "docker_compose_config":
+                r = subprocess.run(
+                    ["docker", "compose", "config", "--quiet"],
+                    capture_output=True, text=True,
+                    cwd=str(target_dir)
+                )
+                results["docker_compose_config"] = {
+                    "exit_code": r.returncode,
+                    "output": (r.stdout + r.stderr).strip() or "✅ docker-compose valid"
                 }
 
-        return [TextContent(type="text", text=json.dumps(results, indent=2))]
+        # Rezumat global: PASS doar dacă toți exit_code == 0
+        all_passed = all(v["exit_code"] == 0 for v in results.values())
+        summary = "✅ STATIC_PASS" if all_passed else "❌ STATIC_FAIL"
+
+        return [TextContent(type="text", text=json.dumps({
+        "summary": summary,
+        "all_passed": all_passed,
+        "target_dir": str(target_dir),
+        "results": results
+        }, indent=2))]
 
     # ── request_approval ──────────────────────
     elif name == "request_approval":
@@ -321,23 +379,57 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
     # ── run_validation ────────────────────────
     elif name == "run_validation":
-        job         = arguments.get("job", "build-and-test")
-        working_dir = arguments.get("working_dir", str(REPO_ROOT))
+        job = arguments.get("job", "build-and-test")
 
-        result = subprocess.run(
-            ["act", "-j", job, "--no-cache-server"],
-            capture_output=True, text=True,
-            cwd=working_dir,
-            timeout=300
-        )
+        if "working_dir" in arguments:
+            working_dir = arguments["working_dir"]
+        elif WORKTREE_PATH.exists():
+            working_dir = str(WORKTREE_PATH)
+        else:
+            working_dir = str(REPO_ROOT)
 
-        output = result.stdout[-3000:] if len(result.stdout) > 3000 else result.stdout
-        return [TextContent(type="text", text=json.dumps({
-            "exit_code": result.returncode,
-            "success": result.returncode == 0,
-            "output_tail": output,
-            "stderr_tail": result.stderr[-500:] if result.stderr else ""
-        }, indent=2))]
+        try:
+            result = subprocess.run(
+                ["act", "-j", job, "--no-cache-server"],
+                capture_output=True, text=True,
+                cwd=working_dir,
+                timeout=300
+            )
+            output = result.stdout[-3000:] if len(result.stdout) > 3000 else result.stdout
+            success = result.returncode == 0
+
+            # Audit
+            log_dir = REPO_ROOT / "agent" / "logs"
+            log_dir.mkdir(parents=True, exist_ok=True)
+            with open(log_dir / "audit.jsonl", "a") as f:
+                f.write(json.dumps({
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "event_type": "DYNAMIC_VALIDATION",
+                    "payload": {
+                        "job": job,
+                        "working_dir": working_dir,
+                        "exit_code": result.returncode,
+                        "success": success
+                    }
+                }) + "\n")
+
+            return [TextContent(type="text", text=json.dumps({
+                "exit_code": result.returncode,
+                "success": success,
+                "working_dir": working_dir,
+                "output_tail": output,
+                "stderr_tail": result.stderr[-500:] if result.stderr else ""
+            }, indent=2))]
+
+        except subprocess.TimeoutExpired:
+            return [TextContent(type="text", text=json.dumps({
+                "exit_code": -1,
+                "success": False,
+                "working_dir": working_dir,
+                "output_tail": "TIMEOUT după 300s",
+                "stderr_tail": ""
+            }, indent=2))]
+        
 
     # ── apply_patch ───────────────────────────
     elif name == "apply_patch":
@@ -428,6 +520,46 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             "diff": diff_result.stdout
         }, indent=2))]
 
+    elif name == "get_iteration_state":
+        return [TextContent(type="text", text=json.dumps({
+            "current": _iteration_state["count"],
+            "max": _iteration_state["max"],
+            "remaining": _iteration_state["max"] - _iteration_state["count"],
+            "exhausted": _iteration_state["count"] >= _iteration_state["max"]
+        }, indent=2))]
+
+    elif name == "reset_iteration_counter":
+        _iteration_state["count"] = 0
+        return [TextContent(type="text", text=json.dumps({
+            "reset": True,
+            "current": 0,
+            "max": _iteration_state["max"]
+        }, indent=2))]
+    elif name == "increment_iteration_counter":
+        reason = arguments.get("reason", "unspecified")
+        _iteration_state["count"] += 1
+
+        # Audit
+        log_dir = REPO_ROOT / "agent" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_dir / "audit.jsonl", "a") as f:
+            f.write(json.dumps({
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "event_type": "ITERATION_INCREMENT",
+                "payload": {
+                    "reason": reason,
+                    "count_after": _iteration_state["count"],
+                    "max": _iteration_state["max"],
+                    "exhausted": _iteration_state["count"] >= _iteration_state["max"]
+                }
+            }) + "\n")
+
+        return [TextContent(type="text", text=json.dumps({
+            "count": _iteration_state["count"],
+            "max": _iteration_state["max"],
+            "remaining": _iteration_state["max"] - _iteration_state["count"],
+            "exhausted": _iteration_state["count"] >= _iteration_state["max"]
+        }, indent=2))]
     else:
         return [TextContent(type="text", text=f"ERROR: tool necunoscut '{name}'")]
 
