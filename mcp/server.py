@@ -20,6 +20,19 @@ from mcp.types import Tool, TextContent
 REPO_ROOT   = Path(__file__).parent.parent
 WORKTREE_PATH = REPO_ROOT / ".patch-worktree"
 _iteration_state: dict = {"count": 0, "max": 3}
+_session_state: dict = {"scenario_id": None, "phase": "IDLE"}
+
+def _write_audit(event_type: str, payload: dict) -> None:
+    log_dir = REPO_ROOT / "agent" / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    with open(log_dir / "audit.jsonl", "a") as f:
+        f.write(json.dumps({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event_type": event_type,
+            "phase": _session_state["phase"],
+            "scenario_id": _session_state["scenario_id"],
+            "payload": payload
+        }) + "\n")
 
 app = Server("devops-agent-mcp")
 
@@ -194,6 +207,29 @@ async def list_tools() -> list[Tool]:
                 "required": ["reason"]
             }
         ),
+        Tool(
+            name="set_session_context",
+            description=(
+                "Setează contextul sesiunii curente: scenario_id și faza activă. "
+                "Apelează la fiecare tranziție de fază (INGEST, LOCALIZE, DIAGNOSE, PATCH, VALIDATE, COMMIT). "
+                "Toate evenimentele de audit scrise după acest apel vor include automat contextul setat."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "scenario_id": {
+                        "type": "string",
+                        "description": "ID-ul scenariului activ (ex: dockerfile-001)"
+                    },
+                    "phase": {
+                        "type": "string",
+                        "enum": ["IDLE", "INGEST", "LOCALIZE", "DIAGNOSE", "PATCH", "VALIDATE", "COMMIT"],
+                        "description": "Faza curentă a state machine-ului"
+                    }
+                },
+                "required": ["scenario_id", "phase"]
+            }
+        ),
     ]
 
 
@@ -244,16 +280,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                          + "\nCorrect your JSON and retry."
                 )]
 
-        log_dir  = REPO_ROOT / "agent" / "logs"
-        log_dir.mkdir(parents=True, exist_ok=True)
-        log_file = log_dir / "audit.jsonl"
-        event = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "event_type": event_type,
-            "payload": payload
-        }
-        with open(log_file, "a") as f:
-            f.write(json.dumps(event) + "\n")
+        _write_audit(event_type, payload)
         return [TextContent(type="text", text=f"✅ Eveniment scris: {event_type}")]
 
     # ── run_static_check ──────────────────────
@@ -348,16 +375,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 print(f"📎 Detalii:\n{json.dumps(other, indent=2)}\n", flush=True)
         print(f"{'='*60}", flush=True)
 
-        log_dir  = REPO_ROOT / "agent" / "logs"
-        log_dir.mkdir(parents=True, exist_ok=True)
-        log_file = log_dir / "audit.jsonl"
-        event = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "event_type": f"CHECKPOINT_{checkpoint}",
-            "payload": {"summary": summary, "details": details, "status": "PENDING"}
-        }
-        with open(log_file, "a") as f:
-            f.write(json.dumps(event) + "\n")
+        _write_audit(f"CHECKPOINT_{checkpoint}", {"summary": summary, "details": details, "status": "PENDING"})
 
         loop = asyncio.get_event_loop()
         answer = await loop.run_in_executor(
@@ -368,12 +386,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         approved = answer in ("y", "yes", "da")
         status   = "APPROVED" if approved else "REJECTED"
 
-        with open(log_file, "a") as f:
-            f.write(json.dumps({
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "event_type": f"CHECKPOINT_{checkpoint}_DECISION",
-                "payload": {"decision": status}
-            }) + "\n")
+        _write_audit(f"CHECKPOINT_{checkpoint}_DECISION", {"decision": status})
 
         return [TextContent(type="text", text=f"{checkpoint}: {status}")]
 
@@ -401,17 +414,12 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             # Audit
             log_dir = REPO_ROOT / "agent" / "logs"
             log_dir.mkdir(parents=True, exist_ok=True)
-            with open(log_dir / "audit.jsonl", "a") as f:
-                f.write(json.dumps({
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "event_type": "DYNAMIC_VALIDATION",
-                    "payload": {
-                        "job": job,
-                        "working_dir": working_dir,
-                        "exit_code": result.returncode,
-                        "success": success
-                    }
-                }) + "\n")
+            _write_audit("DYNAMIC_VALIDATION", {
+                "job": job,
+                "working_dir": working_dir,
+                "exit_code": result.returncode,
+                "success": success
+            })
 
             return [TextContent(type="text", text=json.dumps({
                 "exit_code": result.returncode,
@@ -471,19 +479,14 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         # Audit
         log_dir  = REPO_ROOT / "agent" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
-        with open(log_dir / "audit.jsonl", "a") as f:
-            f.write(json.dumps({
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "event_type": "PATCH_APPLIED",
-                "payload": {
-                    "scenario_id": scenario_id,
-                    "patch_hint": patch_hint,
-                    "success": success,
-                    "stdout": patch_result.stdout,
-                    "stderr": patch_result.stderr,
-                    "worktree": str(WORKTREE_PATH)
-                }
-            }) + "\n")
+        _write_audit("PATCH_APPLIED", {
+            "scenario_id": scenario_id,
+            "patch_hint": patch_hint,
+            "success": success,
+            "stdout": patch_result.stdout,
+            "stderr": patch_result.stderr,
+            "worktree": str(WORKTREE_PATH)
+        })
 
         return [TextContent(type="text", text=json.dumps({
             "success": success,
@@ -535,6 +538,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             "current": 0,
             "max": _iteration_state["max"]
         }, indent=2))]
+    
     elif name == "increment_iteration_counter":
         reason = arguments.get("reason", "unspecified")
         _iteration_state["count"] += 1
@@ -542,17 +546,12 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         # Audit
         log_dir = REPO_ROOT / "agent" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
-        with open(log_dir / "audit.jsonl", "a") as f:
-            f.write(json.dumps({
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "event_type": "ITERATION_INCREMENT",
-                "payload": {
-                    "reason": reason,
-                    "count_after": _iteration_state["count"],
-                    "max": _iteration_state["max"],
-                    "exhausted": _iteration_state["count"] >= _iteration_state["max"]
-                }
-            }) + "\n")
+        _write_audit("ITERATION_INCREMENT", {
+            "reason": reason,
+            "count_after": _iteration_state["count"],
+            "max": _iteration_state["max"],
+            "exhausted": _iteration_state["count"] >= _iteration_state["max"]
+        })
 
         return [TextContent(type="text", text=json.dumps({
             "count": _iteration_state["count"],
@@ -560,6 +559,19 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             "remaining": _iteration_state["max"] - _iteration_state["count"],
             "exhausted": _iteration_state["count"] >= _iteration_state["max"]
         }, indent=2))]
+    
+    elif name == "set_session_context":
+        _session_state["scenario_id"] = arguments["scenario_id"]
+        _session_state["phase"] = arguments["phase"]
+        _write_audit("SESSION_CONTEXT_SET", {
+            "scenario_id": _session_state["scenario_id"],
+            "phase": _session_state["phase"]
+        })
+        return [TextContent(type="text", text=json.dumps({
+            "scenario_id": _session_state["scenario_id"],
+            "phase": _session_state["phase"]
+        }, indent=2))]
+    
     else:
         return [TextContent(type="text", text=f"ERROR: tool necunoscut '{name}'")]
 
