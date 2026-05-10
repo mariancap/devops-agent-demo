@@ -136,10 +136,11 @@ Actions (in order, stop at first failure):
 3. Verify `success: true` and all tests pass
 
 **If validation fails:**
-- Call `get_iteration_state` to check remaining attempts
-- If `exhausted: false`: → PATCH (retry with new information from the failure output)
-- If `exhausted: true`: write a VALIDATION_FAILED audit event with all iteration
-  details and STOP — do not proceed to CP2
+- Call \`increment_iteration_counter\` with the reason (e.g. \"hadolint failed\", \"act exit code 1\")
+- Call \`get_iteration_state\` to check remaining attempts
+- If \`exhausted: false\`: → PATCH (retry with new information from the failure output)
+- If \`exhausted: true\`: write a VALIDATION_FAILED audit event with all iteration
+  details and STOP — do not proceed to CP2'''
 
 **If validation passes:** → CP2"""
 

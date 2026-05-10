@@ -176,6 +176,24 @@ async def list_tools() -> list[Tool]:
             description="Resetează contorul de iterații la 0. Apelează la începutul fiecărui scenariu nou.",
             inputSchema={"type": "object", "properties": {}, "required": []}
         ),
+        Tool(
+            name="increment_iteration_counter",
+            description=(
+                "Incrementează contorul de iterații cu 1. "
+                "Apelează după fiecare validation failure (static sau dynamic), "
+                "înainte de a decide dacă reîncerci sau abandonezi."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "Motivul incrementării (ex: 'hadolint failed', 'act exit code 1')"
+                    }
+                },
+                "required": ["reason"]
+            }
+        ),
     ]
 
 
@@ -363,7 +381,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     elif name == "run_validation":
         job = arguments.get("job", "build-and-test")
 
-        # Dacă nu e specificat explicit, folosim worktree-ul dacă există
         if "working_dir" in arguments:
             working_dir = arguments["working_dir"]
         elif WORKTREE_PATH.exists():
@@ -379,13 +396,31 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 timeout=300
             )
             output = result.stdout[-3000:] if len(result.stdout) > 3000 else result.stdout
+            success = result.returncode == 0
+
+            # Audit
+            log_dir = REPO_ROOT / "agent" / "logs"
+            log_dir.mkdir(parents=True, exist_ok=True)
+            with open(log_dir / "audit.jsonl", "a") as f:
+                f.write(json.dumps({
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "event_type": "DYNAMIC_VALIDATION",
+                    "payload": {
+                        "job": job,
+                        "working_dir": working_dir,
+                        "exit_code": result.returncode,
+                        "success": success
+                    }
+                }) + "\n")
+
             return [TextContent(type="text", text=json.dumps({
                 "exit_code": result.returncode,
-                "success": result.returncode == 0,
+                "success": success,
                 "working_dir": working_dir,
                 "output_tail": output,
                 "stderr_tail": result.stderr[-500:] if result.stderr else ""
             }, indent=2))]
+
         except subprocess.TimeoutExpired:
             return [TextContent(type="text", text=json.dumps({
                 "exit_code": -1,
@@ -499,6 +534,31 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             "reset": True,
             "current": 0,
             "max": _iteration_state["max"]
+        }, indent=2))]
+    elif name == "increment_iteration_counter":
+        reason = arguments.get("reason", "unspecified")
+        _iteration_state["count"] += 1
+
+        # Audit
+        log_dir = REPO_ROOT / "agent" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_dir / "audit.jsonl", "a") as f:
+            f.write(json.dumps({
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "event_type": "ITERATION_INCREMENT",
+                "payload": {
+                    "reason": reason,
+                    "count_after": _iteration_state["count"],
+                    "max": _iteration_state["max"],
+                    "exhausted": _iteration_state["count"] >= _iteration_state["max"]
+                }
+            }) + "\n")
+
+        return [TextContent(type="text", text=json.dumps({
+            "count": _iteration_state["count"],
+            "max": _iteration_state["max"],
+            "remaining": _iteration_state["max"] - _iteration_state["count"],
+            "exhausted": _iteration_state["count"] >= _iteration_state["max"]
         }, indent=2))]
     else:
         return [TextContent(type="text", text=f"ERROR: tool necunoscut '{name}'")]
