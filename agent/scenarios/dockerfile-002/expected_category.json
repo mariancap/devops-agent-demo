@@ -1,0 +1,7 @@
+{
+  "scenario_id": "dockerfile-002",
+  "category": "dockerfile",
+  "affected_file": "Dockerfile",
+  "mutation_description": "COPY replaced with ADD — triggers hadolint DL3020",
+  "expected_fix": "revert ADD back to COPY"
+}
