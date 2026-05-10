@@ -1,0 +1,1 @@
+sed -i 's/eclipse-temurin:21-jdk-alpne/eclipse-temurin:21-jdk-alpine/' Dockerfile

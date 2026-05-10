@@ -1,0 +1,7 @@
+{
+  "scenario_id": "dockerfile-001",
+  "category": "dockerfile",
+  "affected_file": "Dockerfile",
+  "mutation_description": "typo in base image tag: eclipse-temurin:21-jdk-alpine → eclipse-temurin:21-jdk-alpne",
+  "expected_fix": "restore correct tag eclipse-temurin:21-jdk-alpine"
+}
