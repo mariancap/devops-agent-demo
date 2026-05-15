@@ -1,0 +1,7 @@
+{
+  "scenario_id": "docker-compose-002",
+  "category": "docker-compose",
+  "affected_file": "docker-compose.yml",
+  "mutation_description": "invalid depends_on condition enum: service_healthy → service_fast",
+  "expected_fix": "restore condition: service_healthy"
+}

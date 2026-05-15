@@ -1,0 +1,1 @@
+sed -i 's|target/\*.war|target/*.jar|' Dockerfile

@@ -1,0 +1,1 @@
+sed -i 's/image: postgres:/image: postgres:16-alpine/' docker-compose.yml

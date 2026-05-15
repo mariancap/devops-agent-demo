@@ -1,0 +1,1 @@
+sed -i 's/interval: abc/interval: 5s/' docker-compose.yml

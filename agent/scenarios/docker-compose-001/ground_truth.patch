@@ -1,0 +1,1 @@
+sed -i 's/"5432:badport"/"5432:5432"/' docker-compose.yml
