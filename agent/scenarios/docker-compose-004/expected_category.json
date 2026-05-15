@@ -1,0 +1,7 @@
+{
+  "scenario_id": "docker-compose-004",
+  "category": "docker-compose",
+  "affected_file": "docker-compose.yml",
+  "mutation_description": "malformed image reference: postgres:16-alpine → postgres: (empty tag)",
+  "expected_fix": "restore full image reference postgres:16-alpine"
+}

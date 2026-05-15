@@ -1,0 +1,2 @@
+sed -i 's/\.value("Wrong title")/.value("Fix pipeline")/' \
+  src/test/java/com/thesis/demo/controller/TaskControllerUnitTest.java

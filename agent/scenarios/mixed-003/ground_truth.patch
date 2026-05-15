@@ -1,0 +1,1 @@
+sed -i "s/java-version: '17'/java-version: '21'/" .github/workflows/ci.yml

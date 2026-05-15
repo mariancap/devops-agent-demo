@@ -1,0 +1,7 @@
+{
+  "scenario_id": "mixed-003",
+  "category": "mixed",
+  "affected_files": [".github/workflows/ci.yml", "pom.xml"],
+  "mutation_description": "CI installs Java 17 but pom.xml requires java.version=21 — Maven compilation fails with release version mismatch",
+  "expected_fix": "restore java-version to '21' in CI workflow to match java.version in pom.xml"
+}

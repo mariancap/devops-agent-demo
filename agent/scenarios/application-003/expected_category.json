@@ -1,0 +1,7 @@
+{
+  "scenario_id": "application-003",
+  "category": "application",
+  "affected_file": "src/main/java/com/thesis/demo/controller/TaskController.java",
+  "mutation_description": "getById error status changed from NOT_FOUND (404) to BAD_REQUEST (400) — getById_notFound_returns404 fails",
+  "expected_fix": "restore ResponseStatusException status to HttpStatus.NOT_FOUND in getById"
+}

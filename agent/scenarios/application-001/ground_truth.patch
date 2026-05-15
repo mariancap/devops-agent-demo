@@ -1,0 +1,2 @@
+sed -i 's|@RequestMapping("/api/taskz")|@RequestMapping("/api/tasks")|' \
+  src/main/java/com/thesis/demo/controller/TaskController.java

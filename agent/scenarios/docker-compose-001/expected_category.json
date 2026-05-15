@@ -1,0 +1,7 @@
+{
+  "scenario_id": "docker-compose-001",
+  "category": "docker-compose",
+  "affected_file": "docker-compose.yml",
+  "mutation_description": "invalid host port mapping: \"5432:5432\" → \"5432:badport\"",
+  "expected_fix": "restore valid port mapping \"5432:5432\""
+}

@@ -1,0 +1,2 @@
+sed -i 's/EXPOSE 9090/EXPOSE 8080/' Dockerfile
+sed -i 's/- "9090:8080"/- "8080:8080"/' docker-compose.yml

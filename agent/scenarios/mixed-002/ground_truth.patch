@@ -1,0 +1,1 @@
+sed -i 's/POSTGRES_DB: other_db/POSTGRES_DB: demo_db/' docker-compose.yml

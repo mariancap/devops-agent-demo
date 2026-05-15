@@ -1,0 +1,7 @@
+{
+  "scenario_id": "maven-004",
+  "category": "maven",
+  "affected_file": "pom.xml",
+  "mutation_description": "h2 dependency scope changed from test to runtime — H2 auto-configures as datasource in CI overriding PostgreSQL, tests fail",
+  "expected_fix": "restore h2 scope to test"
+}

@@ -1,0 +1,2 @@
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+sed -i 's/mvnw pakage/mvnw package/' "$REPO_ROOT/Dockerfile"

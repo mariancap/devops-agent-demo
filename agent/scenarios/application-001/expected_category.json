@@ -1,0 +1,7 @@
+{
+  "scenario_id": "application-001",
+  "category": "application",
+  "affected_file": "src/main/java/com/thesis/demo/controller/TaskController.java",
+  "mutation_description": "RequestMapping path typo: /api/tasks → /api/taskz — all MockMvc tests get 404",
+  "expected_fix": "restore @RequestMapping to /api/tasks"
+}

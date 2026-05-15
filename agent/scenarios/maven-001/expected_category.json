@@ -1,0 +1,7 @@
+{
+  "scenario_id": "maven-001",
+  "category": "maven",
+  "affected_file": "pom.xml",
+  "mutation_description": "spring-boot-starter-parent version changed from 3.5.0 to non-existent 3.5.999",
+  "expected_fix": "restore spring-boot-starter-parent version to 3.5.0"
+}

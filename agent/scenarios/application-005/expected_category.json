@@ -1,0 +1,7 @@
+{
+  "scenario_id": "application-005",
+  "category": "application",
+  "affected_file": "src/test/java/com/thesis/demo/controller/TaskControllerUnitTest.java",
+  "mutation_description": "jsonPath assertion value changed from 'Fix pipeline' to 'Wrong title' — create_validTask_returns201 fails on title check",
+  "expected_fix": "restore expected title value to 'Fix pipeline' in TaskControllerUnitTest"
+}

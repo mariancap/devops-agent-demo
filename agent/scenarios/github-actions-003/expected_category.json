@@ -1,0 +1,7 @@
+{
+  "scenario_id": "github-actions-003",
+  "category": "github-actions",
+  "affected_file": ".github/workflows/ci.yml",
+  "mutation_description": "DB_HOST env var changed from localhost to wronghost — app cannot connect to postgres service",
+  "expected_fix": "restore DB_HOST to localhost"
+}

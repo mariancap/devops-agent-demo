@@ -1,0 +1,1 @@
+sed -i 's/<java.version>99<\/java.version>/<java.version>21<\/java.version>/' pom.xml

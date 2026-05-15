@@ -1,0 +1,7 @@
+{
+  "scenario_id": "maven-002",
+  "category": "maven",
+  "affected_file": "pom.xml",
+  "mutation_description": "postgresql dependency scope changed from runtime to test — driver missing at runtime, app fails to start in CI",
+  "expected_fix": "restore postgresql scope to runtime"
+}

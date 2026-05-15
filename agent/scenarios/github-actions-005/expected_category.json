@@ -1,0 +1,7 @@
+{
+  "scenario_id": "github-actions-005",
+  "category": "github-actions",
+  "affected_file": ".github/workflows/ci.yml",
+  "mutation_description": "Maven lifecycle goal typo in Build and test step: verify → verfy",
+  "expected_fix": "restore Maven goal to verify"
+}

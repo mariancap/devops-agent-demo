@@ -1,0 +1,1 @@
+sed -i 's/retries: -1/retries: 5/' docker-compose.yml

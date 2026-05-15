@@ -1,0 +1,1 @@
+sed -i 's/mvnw verfy/mvnw verify/' .github/workflows/ci.yml

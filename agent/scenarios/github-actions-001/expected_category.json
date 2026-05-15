@@ -1,0 +1,7 @@
+{
+  "scenario_id": "github-actions-001",
+  "category": "github-actions",
+  "affected_file": ".github/workflows/ci.yml",
+  "mutation_description": "java-version changed from '21' to '99' in setup-java step",
+  "expected_fix": "restore java-version to '21'"
+}

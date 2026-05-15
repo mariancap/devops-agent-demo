@@ -1,0 +1,7 @@
+{
+  "scenario_id": "dockerfile-005",
+  "category": "dockerfile",
+  "affected_file": "Dockerfile",
+  "mutation_description": "USER instruction changed to root — triggers hadolint DL3002",
+  "expected_fix": "revert USER root back to USER appuser"
+}

@@ -1,0 +1,7 @@
+{
+  "scenario_id": "github-actions-004",
+  "category": "github-actions",
+  "affected_file": ".github/workflows/ci.yml",
+  "mutation_description": "postgres service image tag typo: 16-alpine → 16-alpin (image not found)",
+  "expected_fix": "restore postgres image to postgres:16-alpine"
+}
