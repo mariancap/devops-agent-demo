@@ -1,0 +1,7 @@
+{
+  "scenario_id": "maven-005",
+  "category": "maven",
+  "affected_file": "pom.xml",
+  "mutation_description": "spring-boot-starter-web artifactId typo: web → webb (artifact not found in Maven Central)",
+  "expected_fix": "restore artifactId to spring-boot-starter-web"
+}

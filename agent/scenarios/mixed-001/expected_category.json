@@ -1,0 +1,7 @@
+{
+  "scenario_id": "mixed-001",
+  "category": "mixed",
+  "affected_files": ["Dockerfile", "docker-compose.yml"],
+  "mutation_description": "EXPOSE port changed to 9090 in Dockerfile and host port changed to 9090 in docker-compose — docker compose config validation fails",
+  "expected_fix": "restore EXPOSE 8080 in Dockerfile and port mapping 8080:8080 in docker-compose.yml"
+}

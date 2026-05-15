@@ -1,0 +1,7 @@
+{
+  "scenario_id": "github-actions-002",
+  "category": "github-actions",
+  "affected_file": ".github/workflows/ci.yml",
+  "mutation_description": "actions/checkout version changed from v4.2.2 to v99.9.9 (non-existent)",
+  "expected_fix": "restore checkout action to v4.2.2"
+}

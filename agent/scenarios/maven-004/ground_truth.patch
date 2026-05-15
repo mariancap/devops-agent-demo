@@ -1,0 +1,1 @@
+sed -i '/<artifactId>h2<\/artifactId>/{n;s/<scope>runtime<\/scope>/<scope>test<\/scope>/}' pom.xml

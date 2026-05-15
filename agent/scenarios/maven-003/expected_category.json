@@ -1,0 +1,7 @@
+{
+  "scenario_id": "maven-003",
+  "category": "maven",
+  "affected_file": "pom.xml",
+  "mutation_description": "java.version property changed from 21 to 99 — Maven source/target compilation fails",
+  "expected_fix": "restore java.version to 21"
+}
