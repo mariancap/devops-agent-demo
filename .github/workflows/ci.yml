@@ -42,3 +42,5 @@ jobs:
         run: ./mvnw verify -q
       - name: Build Docker image
         run: docker build -t devops-agent-demo:${{ github.sha }} .
+      - name: Validate docker-compose
+        run: docker compose config --quiet
