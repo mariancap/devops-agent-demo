@@ -1,0 +1,227 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.thesis:devops-agent-demo >--------------------
+[INFO] Building devops-agent-demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ devops-agent-demo ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ devops-agent-demo ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 5 source files with javac [debug parameters release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ devops-agent-demo ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ devops-agent-demo ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.3:test (default-test) @ devops-agent-demo ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.thesis.demo.DevopsAgentDemoApplicationTests
+18:49:07.167 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.thesis.demo.DevopsAgentDemoApplicationTests]: DevopsAgentDemoApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+18:49:07.238 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.thesis.demo.DevopsAgentDemoApplication for test class com.thesis.demo.DevopsAgentDemoApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.0)
+
+2026-05-24T18:49:07.604+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.DevopsAgentDemoApplicationTests    : Starting DevopsAgentDemoApplicationTests using Java 21.0.7 with PID 11605 (started by capm in /home/capm/devops-agent-demo/.eval_worktrees/gen_application-002)
+2026-05-24T18:49:07.606+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.DevopsAgentDemoApplicationTests    : The following 1 profile is active: "test"
+2026-05-24T18:49:08.410+03:00  INFO 11605 --- [devops-agent-demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-24T18:49:08.455+03:00  INFO 11605 --- [devops-agent-demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 1 JPA repository interface.
+2026-05-24T18:49:08.813+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-24T18:49:08.860+03:00  INFO 11605 --- [devops-agent-demo] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.15.Final
+2026-05-24T18:49:08.890+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-24T18:49:09.081+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-24T18:49:09.102+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-24T18:49:09.226+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2026-05-24T18:49:09.227+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-24T18:49:09.241+03:00  WARN 11605 --- [devops-agent-demo] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-24T18:49:09.253+03:00  INFO 11605 --- [devops-agent-demo] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-24T18:49:09.834+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-24T18:49:09.864+03:00  INFO 11605 --- [devops-agent-demo] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-24T18:49:10.258+03:00  WARN 11605 --- [devops-agent-demo] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-24T18:49:10.931+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-05-24T18:49:11.001+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.DevopsAgentDemoApplicationTests    : Started DevopsAgentDemoApplicationTests in 3.668 seconds (process running for 4.322)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/home/capm/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.5/byte-buddy-agent-1.17.5.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.405 s -- in com.thesis.demo.DevopsAgentDemoApplicationTests
+[INFO] Running com.thesis.demo.integration.TaskIntegrationTest
+2026-05-24T18:49:11.487+03:00  INFO 11605 --- [devops-agent-demo] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.thesis.demo.integration.TaskIntegrationTest]: TaskIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-24T18:49:11.496+03:00  INFO 11605 --- [devops-agent-demo] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.thesis.demo.DevopsAgentDemoApplication for test class com.thesis.demo.integration.TaskIntegrationTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.0)
+
+2026-05-24T18:49:11.553+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.integration.TaskIntegrationTest    : Starting TaskIntegrationTest using Java 21.0.7 with PID 11605 (started by capm in /home/capm/devops-agent-demo/.eval_worktrees/gen_application-002)
+2026-05-24T18:49:11.554+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.integration.TaskIntegrationTest    : The following 1 profile is active: "test"
+2026-05-24T18:49:11.825+03:00  INFO 11605 --- [devops-agent-demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-24T18:49:11.832+03:00  INFO 11605 --- [devops-agent-demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 5 ms. Found 1 JPA repository interface.
+2026-05-24T18:49:12.029+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2026-05-24T18:49:12.049+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-24T18:49:12.050+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-05-24T18:49:12.095+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-24T18:49:12.097+03:00  INFO 11605 --- [devops-agent-demo] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 540 ms
+2026-05-24T18:49:12.198+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-24T18:49:12.200+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-24T18:49:12.215+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-24T18:49:12.216+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-05-24T18:49:12.218+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:testdb user=SA
+2026-05-24T18:49:12.218+03:00  INFO 11605 --- [devops-agent-demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-05-24T18:49:12.219+03:00  WARN 11605 --- [devops-agent-demo] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-24T18:49:12.220+03:00  INFO 11605 --- [devops-agent-demo] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-24T18:49:12.255+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-24T18:49:12.259+03:00  INFO 11605 --- [devops-agent-demo] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-24T18:49:12.295+03:00  WARN 11605 --- [devops-agent-demo] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-24T18:49:12.416+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-05-24T18:49:12.591+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 45969 (http) with context path '/'
+2026-05-24T18:49:12.596+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.integration.TaskIntegrationTest    : Started TaskIntegrationTest in 1.095 seconds (process running for 5.918)
+2026-05-24T18:49:12.874+03:00  INFO 11605 --- [devops-agent-demo] [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-24T18:49:12.875+03:00  INFO 11605 --- [devops-agent-demo] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-24T18:49:12.876+03:00  INFO 11605 --- [devops-agent-demo] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1.571 s <<< FAILURE! -- in com.thesis.demo.integration.TaskIntegrationTest
+[ERROR] com.thesis.demo.integration.TaskIntegrationTest.createAndRetrieveTask -- Time elapsed: 0.044 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: 201 CREATED
+ but was: 200 OK
+	at com.thesis.demo.integration.TaskIntegrationTest.createAndRetrieveTask(TaskIntegrationTest.java:42)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] Running com.thesis.demo.controller.TaskControllerUnitTest
+2026-05-24T18:49:13.064+03:00  INFO 11605 --- [devops-agent-demo] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.thesis.demo.controller.TaskControllerUnitTest]: TaskControllerUnitTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-24T18:49:13.113+03:00  INFO 11605 --- [devops-agent-demo] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.thesis.demo.DevopsAgentDemoApplication for test class com.thesis.demo.controller.TaskControllerUnitTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.0)
+
+2026-05-24T18:49:13.143+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.controller.TaskControllerUnitTest  : Starting TaskControllerUnitTest using Java 21.0.7 with PID 11605 (started by capm in /home/capm/devops-agent-demo/.eval_worktrees/gen_application-002)
+2026-05-24T18:49:13.143+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.controller.TaskControllerUnitTest  : No active profile set, falling back to 1 default profile: "default"
+2026-05-24T18:49:13.663+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-24T18:49:13.663+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-24T18:49:13.664+03:00  INFO 11605 --- [devops-agent-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-24T18:49:13.681+03:00  INFO 11605 --- [devops-agent-demo] [           main] c.t.d.controller.TaskControllerUnitTest  : Started TaskControllerUnitTest in 0.565 seconds (process running for 7.002)
+
+MockHttpServletRequest:
+      HTTP Method = POST
+      Request URI = /api/tasks
+       Parameters = {}
+          Headers = [Content-Type:"application/json;charset=UTF-8", Content-Length:"48"]
+             Body = {"title":"Fix pipeline","description":"Urgent"}
+
+    Session Attrs = {}
+
+Handler:
+             Type = com.thesis.demo.controller.TaskController
+           Method = com.thesis.demo.controller.TaskController#create(Task)
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Type:"application/json"]
+     Content type = application/json
+             Body = {"id":null,"title":"Fix pipeline","description":"Urgent","status":"TODO","createdAt":"2026-05-24T15:49:13.758562056Z"}
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+[ERROR] Tests run: 3, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.740 s <<< FAILURE! -- in com.thesis.demo.controller.TaskControllerUnitTest
+[ERROR] com.thesis.demo.controller.TaskControllerUnitTest.create_validTask_returns201 -- Time elapsed: 0.025 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<201> but was:<200>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:61)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:128)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:640)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+	at com.thesis.demo.controller.TaskControllerUnitTest.create_validTask_returns201(TaskControllerUnitTest.java:56)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   TaskControllerUnitTest.create_validTask_returns201:56 Status expected:<201> but was:<200>
+[ERROR]   TaskIntegrationTest.createAndRetrieveTask:42 
+expected: 201 CREATED
+ but was: 200 OK
+[INFO] 
+[ERROR] Tests run: 6, Failures: 2, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.051 s
+[INFO] Finished at: 2026-05-24T18:49:14+03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project devops-agent-demo: There are test failures.
+[ERROR] 
+[ERROR] See /home/capm/devops-agent-demo/.eval_worktrees/gen_application-002/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
