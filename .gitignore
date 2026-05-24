@@ -33,3 +33,7 @@ build/
 .vscode/
 .patch-worktree/
 agent/logs/audit.jsonl
+
+### script files ###
+script.sh
+.eval_worktrees/
