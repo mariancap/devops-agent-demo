@@ -1,0 +1,30 @@
+time="2026-05-24T18:02:06+03:00" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+[CI/build-and-test] ⭐ Run Set up job
+[CI/build-and-test] 🚀  Start image=catthehacker/ubuntu:act-latest
+[CI/build-and-test]   🐳  docker pull image=postgres:16-alpine platform= username= forcePull=true
+[CI/build-and-test] using DockerAuthConfig authentication for docker pull
+[CI/build-and-test]   🐳  docker pull image=catthehacker/ubuntu:act-latest platform= username= forcePull=true
+[CI/build-and-test] using DockerAuthConfig authentication for docker pull
+[CI/build-and-test] Cleaning up services for job build-and-test
+[CI/build-and-test] Cleaning up network for job build-and-test, and network name is: act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network
+[CI/build-and-test]   🐳  docker pull image=postgres:16-alpine platform= username= forcePull=false
+[CI/build-and-test]   🐳  docker create image=postgres:16-alpine platform= entrypoint=[] cmd=[] network="act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network"
+[CI/build-and-test]   🐳  docker run image=postgres:16-alpine platform= entrypoint=[] cmd=[] network="act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network"
+[CI/build-and-test]   🐳  docker create image=catthehacker/ubuntu:act-latest platform= entrypoint=["tail" "-f" "/dev/null"] cmd=[] network="host"
+[CI/build-and-test]   🐳  docker run image=catthehacker/ubuntu:act-latest platform= entrypoint=["tail" "-f" "/dev/null"] cmd=[] network="host"
+[CI/build-and-test] container health of b2a913029e8913eda2ee8f8d8ca12a4a2035eb7e91f4789fe1168866780ba54b (postgres:16-alpine) is starting
+[CI/build-and-test] container health of b2a913029e8913eda2ee8f8d8ca12a4a2035eb7e91f4789fe1168866780ba54b (postgres:16-alpine) is starting
+[CI/build-and-test] container health of b2a913029e8913eda2ee8f8d8ca12a4a2035eb7e91f4789fe1168866780ba54b (postgres:16-alpine) is starting
+[CI/build-and-test] container health of b2a913029e8913eda2ee8f8d8ca12a4a2035eb7e91f4789fe1168866780ba54b (postgres:16-alpine) is healthy
+[CI/build-and-test]   🐳  docker exec cmd=[node --no-warnings -e console.log(process.execPath)] user= workdir=
+[CI/build-and-test]   ✅  Success - Set up job
+[CI/build-and-test]   ☁  git clone 'https://github.com/actions/setup-java' # ref=v4.7.0
+[CI/build-and-test] ⭐ Run Main Checkout code
+[CI/build-and-test]   🐳  docker cp src=/home/capm/devops-agent-demo/.gen_worktree/. dst=/home/capm/devops-agent-demo/.gen_worktree
+[CI/build-and-test] <nil>
+[CI/build-and-test]   ❌  Failure - Main Checkout code [23.2067ms]
+[CI/build-and-test] lstat /home/capm/devops-agent-demo/.gen_worktree/.: no such file or directory
+[CI/build-and-test] ⭐ Run Complete job
+[CI/build-and-test]   ✅  Success - Complete job
+[CI/build-and-test] 🏁  Job failed
+Error: Job 'build-and-test' failed
