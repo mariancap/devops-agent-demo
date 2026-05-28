@@ -380,7 +380,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         _write_audit(f"CHECKPOINT_{checkpoint}", {"summary": summary, "details": details, "status": "PENDING"})
 
         batch_flag = Path(REPO_ROOT) / ".batch_mode"
-        if os.environ.get("BATCH_MODE") == "1" or batch_flag.exists():
+        if os.environ.get("BATCH_MODE") in ("1", "true", "True") or batch_flag.exists():
             print(f"[BATCH] Auto-approving {checkpoint}", flush=True)
             answer = "y"
         else:

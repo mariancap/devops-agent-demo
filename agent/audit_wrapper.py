@@ -66,7 +66,7 @@ def build_claude_command(scenario_id: str, system_prompt_path: str) -> list[str]
         "claude",
         "--mcp-config", str(Path(system_prompt_path).parent.parent / ".claude.json"),
         "--dangerously-skip-permissions",
-        "--system-prompt", system_prompt_path.replace("system_prompt.md", "system_prompt_batch.md") if os.environ.get("BATCH_MODE") == "1" or (Path(system_prompt_path).parent.parent / ".batch_mode").exists() else system_prompt_path,
+        "--system-prompt", system_prompt_path.replace("system_prompt.md", "system_prompt_batch.md") if os.environ.get("BATCH_MODE") in ("1", "true", "True") or (Path(system_prompt_path).parent.parent / ".batch_mode").exists() else system_prompt_path,
         "--print",                  # non-interactive / headless output
         f"Scenario: {scenario_id}. Read the error log at agent/scenarios/{scenario_id}/error.log and begin from PHASE 1: INGEST.",
     ]
@@ -109,6 +109,7 @@ def run(scenario_id: str, log_dir: str, system_prompt_path: str, dry_run: bool):
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,   # merge stderr into stdout
+            env={**os.environ, "ANTHROPIC_API_KEY": ""},
             text=True,
             bufsize=1,                  # line-buffered
         )
