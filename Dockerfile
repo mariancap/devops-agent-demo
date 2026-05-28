@@ -1,15 +1,15 @@
 # ── Stage 1: build ──────────────────────────────────────────────────────────
-FROM eclipse-temurin:21-jdk-alpne AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
 # Copiază doar fișierele de dependențe mai întâi (cache layer)
-ADD .mvn/ .mvn/
-ADD mvnw pom.xml ./
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
 RUN ./mvnw dependency:go-offline -q
 
 # Copiază codul sursă și construiește
-ADD src/ src/
+COPY src/ src/
 RUN ./mvnw package -DskipTests -q
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ USER appuser
 
 WORKDIR /app
 
-ADD --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
