@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: demo_user
       POSTGRES_PASSWORD: demo_pass
     ports:
-      - "5432:5432"
+      - "5432:badport"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
