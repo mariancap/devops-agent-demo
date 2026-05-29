@@ -39,7 +39,7 @@ jobs:
           DB_NAME: demo_db
           DB_USER: demo_user
           DB_PASS: demo_pass
-        run: ./mvnw verify -q
+        run: ./mvnw verfy -q
       - name: Build Docker image
         run: docker build -t devops-agent-demo:${{ github.sha }} .
       - name: Validate docker-compose
