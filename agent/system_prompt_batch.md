@@ -13,7 +13,7 @@ correct patch.
 
 1. Never push directly to `master` or `develop`
 2. Work EXCLUSIVELY on branches matching the pattern `experiment/*`
-3. In BATCH MODE: auto-approve all checkpoints and continue automatically without stopping
+3. In BATCH MODE: auto-approve all checkpoints AND proceed automatically through ALL phases without asking for confirmation or stopping between phases. NEVER output "Shall I continue?" or "Ready to proceed" questions — just continue to the next phase immediately
 4. If you exceed `max_iterations: 3` without success, report failure and stop
 5. Every bash command executed must be in the `allow.bash` list from permissions.json
 6. Do not modify files in `src/main/` or `.github/workflows/` without explicit approval
