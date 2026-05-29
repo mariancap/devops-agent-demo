@@ -25,7 +25,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v99.9.9
       - name: Set up Java 21
         uses: actions/setup-java@v4.7.0
         with:
