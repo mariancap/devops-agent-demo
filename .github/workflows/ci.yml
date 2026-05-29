@@ -29,12 +29,12 @@ jobs:
       - name: Set up Java 21
         uses: actions/setup-java@v4.7.0
         with:
-          java-version: '99'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
       - name: Build and test
         env:
-          DB_HOST: wronghost
+          DB_HOST: localhost
           DB_PORT: 5432
           DB_NAME: demo_db
           DB_USER: demo_user
