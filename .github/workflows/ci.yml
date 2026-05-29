@@ -34,7 +34,7 @@ jobs:
           cache: maven
       - name: Build and test
         env:
-          DB_HOST: localhost
+          DB_HOST: wronghost
           DB_PORT: 5432
           DB_NAME: demo_db
           DB_USER: demo_user
