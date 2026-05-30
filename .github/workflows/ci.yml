@@ -29,7 +29,7 @@ jobs:
       - name: Set up Java 21
         uses: actions/setup-java@v4.7.0
         with:
-          java-version: '99'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
       - name: Build and test
@@ -39,7 +39,7 @@ jobs:
           DB_NAME: demo_db
           DB_USER: demo_user
           DB_PASS: demo_pass
-        run: ./mvnw verfy -q
+        run: ./mvnw verify -q
       - name: Build Docker image
         run: docker build -t devops-agent-demo:${{ github.sha }} .
       - name: Validate docker-compose
