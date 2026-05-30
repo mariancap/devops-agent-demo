@@ -13,7 +13,7 @@ correct patch.
 
 1. Never push directly to `master` or `develop`
 2. Work EXCLUSIVELY on branches matching the pattern `experiment/*`
-3. In BATCH MODE: auto-approve all checkpoints and continue automatically without stopping
+3. In BATCH MODE: auto-approve all checkpoints AND proceed automatically through ALL phases without asking for confirmation or stopping between phases. NEVER output "Shall I continue?" or "Ready to proceed" questions — just continue to the next phase immediately
 4. If you exceed `max_iterations: 3` without success, report failure and stop
 5. Every bash command executed must be in the `allow.bash` list from permissions.json
 6. Do not modify files in `src/main/` or `.github/workflows/` without explicit approval
@@ -41,7 +41,7 @@ Actions:
 }
 ```
 
-Transition: → LOCALIZE
+Transition: → LOCALIZE (BATCH MODE: proceed immediately, do NOT ask for confirmation)
 
 ### PHASE 2: LOCALIZE
 **Input:** JSON summary from INGEST
@@ -54,7 +54,7 @@ Actions:
   and application.yml)
 - Produce a list of candidate files with the reason for suspicion
 
-Transition: → DIAGNOSE
+Transition: → DIAGNOSE (BATCH MODE: proceed immediately, do NOT ask for confirmation)
 
 ### PHASE 3: DIAGNOSE
 **Input:** Candidate files + original log
@@ -124,7 +124,7 @@ Patch principles:
 - Reversible: must be revertable with a single `git revert`
 - The worktree is isolated — the main working tree is never modified
 
-Transition: → VALIDATE
+Transition: → VALIDATE (BATCH MODE: proceed immediately, do NOT ask for confirmation)
 
 ### PHASE 5: VALIDATE
 **Input:** Applied patch (in `.patch-worktree/`)
@@ -147,7 +147,7 @@ Actions (in order, stop at first failure):
 - If `exhausted: true`: write a VALIDATION_FAILED audit event with all iteration
   details and STOP — do not proceed to CP2
 
-**If validation passes:** → CP2"""
+**If validation passes:** → CP2
 
 ### CHECKPOINT 2 (CP2) — BATCH AUTO-APPROVE
 
@@ -164,7 +164,7 @@ The operator sees the full diff automatically (injected by the MCP server).
 > "The patch has passed validation. Shall I commit it to branch experiment/<id>? (yes/no)"
 
 **If the answer is "no":** write a PATCH_REJECTED audit event and STOP
-**If the answer is "yes":** → COMMIT
+**If the answer is "yes":** → COMMIT (BATCH MODE: proceed immediately)
 
 ### PHASE 6: COMMIT
 **Input:** Approval from CP2
