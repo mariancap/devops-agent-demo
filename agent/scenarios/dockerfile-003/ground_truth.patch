@@ -1,0 +1,1 @@
+sed -i 's/dependency:go-ofline/dependency:go-offline/' Dockerfile

@@ -1,0 +1,7 @@
+{
+  "scenario_id": "application-002",
+  "category": "application",
+  "affected_file": "src/main/java/com/thesis/demo/controller/TaskController.java",
+  "mutation_description": "@ResponseStatus on create changed from CREATED (201) to OK (200) — create_validTask_returns201 fails",
+  "expected_fix": "restore @ResponseStatus to HttpStatus.CREATED"
+}

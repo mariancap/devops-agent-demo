@@ -16,6 +16,7 @@ What it does:
 import argparse
 import json
 import os
+from pathlib import Path
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -63,7 +64,9 @@ def build_claude_command(scenario_id: str, system_prompt_path: str) -> list[str]
     """Build the Claude Code CLI invocation."""
     return [
         "claude",
-        "--system-prompt", system_prompt_path,
+        "--mcp-config", str(Path(system_prompt_path).parent.parent / ".claude.json"),
+        "--dangerously-skip-permissions",
+        "--system-prompt", system_prompt_path.replace("system_prompt.md", "system_prompt_batch.md") if os.environ.get("BATCH_MODE") == "1" or (Path(system_prompt_path).parent.parent / ".batch_mode").exists() else system_prompt_path,
         "--print",                  # non-interactive / headless output
         f"Scenario: {scenario_id}. Read the error log at agent/scenarios/{scenario_id}/error.log and begin from PHASE 1: INGEST.",
     ]

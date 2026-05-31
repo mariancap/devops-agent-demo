@@ -1,0 +1,22 @@
+time="2026-05-24T18:00:23+03:00" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+[CI/build-and-test] ⭐ Run Set up job
+[CI/build-and-test] 🚀  Start image=catthehacker/ubuntu:act-latest
+[CI/build-and-test]   🐳  docker pull image=postgres:16-alpine platform= username= forcePull=true
+[CI/build-and-test] using DockerAuthConfig authentication for docker pull
+[CI/build-and-test]   🐳  docker pull image=catthehacker/ubuntu:act-latest platform= username= forcePull=true
+[CI/build-and-test] using DockerAuthConfig authentication for docker pull
+[CI/build-and-test] Cleaning up services for job build-and-test
+[CI/build-and-test] Cleaning up network for job build-and-test, and network name is: act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network
+[CI/build-and-test]   🐳  docker pull image=postgres:16-alpine platform= username= forcePull=false
+[CI/build-and-test]   🐳  docker create image=postgres:16-alpine platform= entrypoint=[] cmd=[] network="act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network"
+[CI/build-and-test]   🐳  docker run image=postgres:16-alpine platform= entrypoint=[] cmd=[] network="act-CI-build-and-test-f6f3a1400b80601c28d137fcfad25c00be931e7910b7b04445a5fdb4b89fc556-build-and-test-network"
+[CI/build-and-test]   🐳  docker create image=catthehacker/ubuntu:act-latest platform= entrypoint=["tail" "-f" "/dev/null"] cmd=[] network="host"
+[CI/build-and-test]   🐳  docker run image=catthehacker/ubuntu:act-latest platform= entrypoint=["tail" "-f" "/dev/null"] cmd=[] network="host"
+[CI/build-and-test] container health of d409a259296270a1ae9385bc6dd51b113cf465809954faee82b5be47ba1870d2 (postgres:16-alpine) is starting
+[CI/build-and-test] container health of d409a259296270a1ae9385bc6dd51b113cf465809954faee82b5be47ba1870d2 (postgres:16-alpine) is starting
+[CI/build-and-test] container health of d409a259296270a1ae9385bc6dd51b113cf465809954faee82b5be47ba1870d2 (postgres:16-alpine) is starting
+[CI/build-and-test] failed to query container health Error response from daemon: No such container: d409a259296270a1ae9385bc6dd51b113cf465809954faee82b5be47ba1870d2
+[CI/build-and-test] service container failed to start
+[CI/build-and-test]   ❌  Failure - Set up job
+[CI/build-and-test] 🏁  Job failed
+Error: service container failed to start

@@ -1,0 +1,7 @@
+{
+  "scenario_id": "docker-compose-003",
+  "category": "docker-compose",
+  "affected_file": "docker-compose.yml",
+  "mutation_description": "invalid healthcheck interval duration: 5s → abc",
+  "expected_fix": "restore valid interval: 5s"
+}

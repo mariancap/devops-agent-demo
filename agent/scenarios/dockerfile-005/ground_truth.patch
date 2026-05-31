@@ -1,0 +1,1 @@
+sed -i 's/^USER root$/USER appuser/' Dockerfile

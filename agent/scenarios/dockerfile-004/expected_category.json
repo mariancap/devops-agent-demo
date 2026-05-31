@@ -1,0 +1,7 @@
+{
+  "scenario_id": "dockerfile-004",
+  "category": "dockerfile",
+  "affected_file": "Dockerfile",
+  "mutation_description": "typo in Maven goal: mvnw package → mvnw pakage",
+  "expected_fix": "restore correct Maven goal mvnw package"
+}

@@ -1,0 +1,1 @@
+sed -i 's/condition: service_fast/condition: service_healthy/' docker-compose.yml

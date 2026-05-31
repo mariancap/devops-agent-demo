@@ -1,0 +1,1 @@
+sed -i 's/postgres:16-alpin/postgres:16-alpine/' .github/workflows/ci.yml

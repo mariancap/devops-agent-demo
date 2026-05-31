@@ -1,0 +1,9 @@
+time="2026-05-24T18:00:14+03:00" level=info msg="Using docker host 'unix:///var/run/docker.sock', and daemon socket 'unix:///var/run/docker.sock'"
+[CI/build-and-test] ⭐ Run Set up job
+[CI/build-and-test] 🚀  Start image=catthehacker/ubuntu:act-latest
+[CI/build-and-test]   🐳  docker pull image=postgres:16-alpin platform= username= forcePull=true
+[CI/build-and-test] using DockerAuthConfig authentication for docker pull
+[CI/build-and-test] Error response from daemon: unknown: failed to resolve reference "docker.io/library/postgres:16-alpin": unexpected status from HEAD request to https://registry-1.docker.io/v2/library/postgres/manifests/16-alpin: 500 Internal Server Error
+[CI/build-and-test]   ❌  Failure - Set up job
+[CI/build-and-test] 🏁  Job failed
+Error: Error response from daemon: unknown: failed to resolve reference "docker.io/library/postgres:16-alpin": unexpected status from HEAD request to https://registry-1.docker.io/v2/library/postgres/manifests/16-alpin: 500 Internal Server Error

@@ -1,0 +1,7 @@
+{
+  "scenario_id": "dockerfile-003",
+  "category": "dockerfile",
+  "affected_file": "Dockerfile",
+  "mutation_description": "typo in Maven goal: dependency:go-offline → dependency:go-ofline",
+  "expected_fix": "restore correct Maven goal dependency:go-offline"
+}

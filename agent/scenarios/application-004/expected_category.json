@@ -1,0 +1,7 @@
+{
+  "scenario_id": "application-004",
+  "category": "application",
+  "affected_file": "src/main/java/com/thesis/demo/controller/TaskController.java",
+  "mutation_description": "@PostMapping changed to @PutMapping on create — MockMvc POST /api/tasks gets 405 Method Not Allowed",
+  "expected_fix": "restore @PutMapping to @PostMapping on the create method"
+}

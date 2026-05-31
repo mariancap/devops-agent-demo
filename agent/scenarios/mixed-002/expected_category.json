@@ -1,0 +1,7 @@
+{
+  "scenario_id": "mixed-002",
+  "category": "mixed",
+  "affected_files": ["docker-compose.yml", ".github/workflows/ci.yml"],
+  "mutation_description": "POSTGRES_DB in docker-compose changed to other_db but CI uses demo_db — compose stack cannot serve the database the app expects",
+  "expected_fix": "restore POSTGRES_DB to demo_db in docker-compose.yml to match DB_NAME in CI workflow"
+}

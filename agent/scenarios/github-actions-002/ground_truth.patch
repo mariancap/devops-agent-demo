@@ -1,0 +1,1 @@
+sed -i 's/checkout@v99.9.9/checkout@v4.2.2/' .github/workflows/ci.yml

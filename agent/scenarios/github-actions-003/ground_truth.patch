@@ -1,0 +1,1 @@
+sed -i 's/DB_HOST: wronghost/DB_HOST: localhost/' .github/workflows/ci.yml
