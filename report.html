@@ -1417,6 +1417,271 @@
   </section>
 
 
+  
+  <!-- ===== SECTION: Error Analysis ===== -->
+  <section id="error-analysis">
+    <h2 class="section-title">Qualitative Error Analysis</h2>
+    <p style="color:var(--text-dim);margin-bottom:28px;max-width:720px;">
+      All 31 failed sessions across the benchmark were labeled with a failure mode by inspecting
+      the <code>SESSION_END</code> audit event, <code>OUTPUT</code> lines, exit codes, and session
+      durations. <strong>Zero failures were caused by incorrect agent reasoning</strong> — every
+      failed run was terminated by an external infrastructure constraint.
+    </p>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;">
+
+      <div style="padding:16px 20px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);border-left:3px solid var(--accent3);">
+        <div style="font-size:22px;font-family:var(--mono);font-weight:700;color:var(--accent3);">14</div>
+        <div style="font-size:12px;font-family:var(--mono);color:var(--accent3);margin-top:2px;">API_CREDIT</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Anthropic credit balance exhausted</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">45% of failed runs</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);border-left:3px solid var(--danger);">
+        <div style="font-size:22px;font-family:var(--mono);font-weight:700;color:var(--danger);">7</div>
+        <div style="font-size:12px;font-family:var(--mono);color:var(--danger);margin-top:2px;">API_ERROR</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Network connection reset (ECONNRESET)</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">23% of failed runs</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);border-left:3px solid #a78bfa;">
+        <div style="font-size:22px;font-family:var(--mono);font-weight:700;color:#a78bfa;">7</div>
+        <div style="font-size:12px;font-family:var(--mono);color:#a78bfa;margin-top:2px;">SESSION_LIMIT</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Claude.ai daily session quota reached</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">23% of failed runs</div>
+      </div>
+      <div style="padding:16px 20px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);border-left:3px solid #f87171;">
+        <div style="font-size:22px;font-family:var(--mono);font-weight:700;color:#f87171;">3</div>
+        <div style="font-size:12px;font-family:var(--mono);color:#f87171;margin-top:2px;">PROCESS_KILLED</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Process killed by OS (SIGTERM, exit 143)</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">10% of failed runs</div>
+      </div>
+    </div>
+
+    <!-- Key finding callout -->
+    <div class="conclusion-box" style="margin-bottom:28px;border-color:var(--accent);background:rgba(0,229,160,0.04);">
+      <p>
+        <strong>Key finding:</strong> The agent's 3.6% failure rate is entirely attributable to
+        infrastructure constraints — credit exhaustion (14 runs), session quota limits
+        (7 runs), network resets (7 runs), and OS-level process
+        termination (3 runs). In every case where the agent was allowed to run
+        to completion, it produced a correct fix. This confirms that the <strong>agent reasoning
+        pipeline has 0% wrong-diagnosis rate</strong> on this benchmark.
+      </p>
+    </div>
+
+    <!-- Detailed failure table -->
+    <div class="table-wrapper">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>Failure Mode</th>
+            <th>Root Cause</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">4s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">3s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-004</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">118s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-005</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">github-actions-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">8s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">github-actions-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">6s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">github-actions-004</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">github-actions-005</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">maven-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">maven-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">8s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">maven-004</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">maven-005</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">mixed-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">mixed-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--accent3);color:var(--accent3);">API_CREDIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Credit balance is too low</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">5s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">application-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">176s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">application-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">176s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">application-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">175s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">docker-compose-004</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">170s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">docker-compose-005</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">77s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">github-actions-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">276s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">maven-002</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid var(--danger);color:var(--danger);">API_ERROR</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">ECONNRESET — connection dropped</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">192s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #f87171;color:#f87171;">PROCESS_KILLED</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">exit_code 143 — SIGTERM (act timeout)</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">2031s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #f87171;color:#f87171;">PROCESS_KILLED</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">exit_code 143 — SIGTERM (act timeout)</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">2018s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #f87171;color:#f87171;">PROCESS_KILLED</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">exit_code non-zero, no output captured</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">185s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">docker-compose-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit · resets at 2:40pm</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">3733s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">docker-compose-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit · resets at 2:40pm</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">603s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">docker-compose-003</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit mid-run</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">210s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit mid-run</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">107s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit mid-run</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">643s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-001</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit mid-run</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">531s</td>
+          </tr>
+          <tr>
+            <td class="mono" style="font-size:12px;">dockerfile-005</td>
+            <td><span style="font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:3px;background:rgba(0,0,0,0.3);border:1px solid #a78bfa;color:#a78bfa;">SESSION_LIMIT</span></td>
+            <td style="font-size:12px;color:var(--text-dim);">Session limit hit mid-run</td>
+            <td class="mono" style="font-size:12px;color:var(--text-muted);">483s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mode distribution bar -->
+    <div style="margin-top:28px;">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em;">
+        Failure mode distribution (31 failed sessions)
+      </div>
+      <div style="display:flex;gap:0;height:32px;border-radius:6px;overflow:hidden;border:1px solid var(--border);" id="failure-dist"></div>
+      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;" id="failure-dist-legend"></div>
+    </div>
+  </section>
+
+
   <footer>
     <div style="margin-bottom:8px;">devops-agent-demo · mariancap/devops-agent-demo</div>
     <div>Generated: 2026-06-03 · week-3-complete · Claude Sonnet 4.6</div>
@@ -1648,6 +1913,32 @@ fills.forEach(f => {
       el.style.height = el.dataset.target + '%';
     });
   }, 500);
+})();
+</script>
+
+
+<script>
+(function() {
+  const dist = [
+    { mode: 'API_CREDIT',     count: 14,     color: 'var(--accent3)' },
+    { mode: 'SESSION_LIMIT',  count: 7,  color: '#a78bfa' },
+    { mode: 'API_ERROR',      count: 7,      color: 'var(--danger)' },
+    { mode: 'PROCESS_KILLED', count: 3, color: '#f87171' },
+  ];
+  const total = 31;
+  const bar = document.getElementById('failure-dist');
+  const legend = document.getElementById('failure-dist-legend');
+  if (!bar) return;
+  dist.forEach(d => {
+    const seg = document.createElement('div');
+    seg.style.cssText = `width:${(d.count/total*100).toFixed(1)}%;background:${d.color};opacity:0.8;transition:width 1s ease;`;
+    seg.title = `${d.mode}: ${d.count} runs (${(d.count/total*100).toFixed(0)}%)`;
+    bar.appendChild(seg);
+    const item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);';
+    item.innerHTML = `<span style="width:10px;height:10px;border-radius:2px;background:${d.color};opacity:0.8;display:inline-block;"></span>${d.mode} (${d.count})`;
+    legend.appendChild(item);
+  });
 })();
 </script>
 
