@@ -50,7 +50,7 @@ public class HomeController {
 <div class="container">
   <div class="badge"><span class="dot"></span>live · devops-agent-demo.onrender.com</div>
   <h1>devops-agent-demo</h1>
-  <p class="subtitle">Task Management REST API — Spring Boot 3.5 · PostgreSQL · Java 21<br>CI/CD remediation agent benchmark substrate · Master's thesis, Marian Capotă 2026</p>
+  <p class="subtitle">Task Management REST API — Spring Boot 3.5 · PostgreSQL · Java 21<br>CI/CD remediation agent benchmark substrate · Master's thesis, Marian Cap 2026</p>
 
   <div class="metrics">
     <div class="metric">
