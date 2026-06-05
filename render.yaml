@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: devops-agent-demo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: DB_HOST
+        fromDatabase:
+          name: devops-agent-demo-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: devops-agent-demo-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: devops-agent-demo-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: devops-agent-demo-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: devops-agent-demo-db
+          property: password
+    healthCheckPath: /actuator/health
+
+databases:
+  - name: devops-agent-demo-db
+    plan: free
+    databaseName: demo_db
+    user: demo_user
