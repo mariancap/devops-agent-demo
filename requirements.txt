@@ -1,0 +1,21 @@
+# devops-agent-demo — Python dependencies
+# Pinned for reproducibility (generated 2026-06-05)
+# Install with: pip3 install --break-system-packages -r requirements.txt
+
+# Anthropic SDK — agent runtime
+anthropic==0.52.0
+
+# MCP — Model Context Protocol server
+mcp==1.9.2
+
+# JSON Schema validation (diagnosis schema at CP1)
+jsonschema==4.26.0
+
+# HTTP client used internally by anthropic SDK
+httpx==0.28.1
+
+# Typing extensions (transitive, pinned for stability)
+typing_extensions==4.13.2
+
+# Anyio (async runtime for mcp stdio server)
+anyio==4.9.0
