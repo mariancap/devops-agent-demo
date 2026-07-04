@@ -84,7 +84,7 @@ public class HomeController {
   </div>
 
   <div class="footer">
-    <span class="thesis-tag">dizertație 2026</span>
+    <span class="thesis-tag">disertație 2026</span>
     <a href="https://github.com/mariancap/devops-agent-demo" target="_blank">github.com/mariancap/devops-agent-demo</a>
   </div>
 </div>

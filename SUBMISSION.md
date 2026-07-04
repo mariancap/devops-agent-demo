@@ -3,7 +3,7 @@
 > **Titlul tezei:**  
 > Agentic CI/CD Remediation with Claude Code: A Human-in-the-Loop System for Diagnosing and Fixing Pipeline Failures in Containerised Build Workflows
 
-> **Autor:** Marian Capotă  
+> **Autor:** Marian Cap
 > **An:** 2026  
 > **Repository:** https://github.com/mariancap/devops-agent-demo  
 > **Tag:** `final-release`
@@ -112,7 +112,7 @@ A: Nu — patch-ul e aplicat într-un git worktree izolat. Commit-ul în branch-
 
 ## Contactul autorului
 
-Marian Capotă  
+Marian Cap  
 GitHub: [@mariancap](https://github.com/mariancap)  
 Repository: https://github.com/mariancap/devops-agent-demo
 
