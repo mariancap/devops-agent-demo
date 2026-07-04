@@ -3,7 +3,7 @@
 > **Agentic CI/CD Remediation with Claude Code**  
 > A human-in-the-loop agent that diagnoses and fixes CI/CD pipeline failures in containerised Spring Boot workflows.
 
-Master's thesis project — Marian Capotă, 2026.  
+Master's thesis project — Marian Cap, 2026.  
 Evaluated on a seeded benchmark of 28 reproducible failure scenarios across 6 categories.
 
 ---

@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DevOps Agent Evaluation Report</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #181c24;
-    --border: #1e2330;
-    --accent: #00e5a0;
-    --accent2: #3b82f6;
-    --accent3: #f59e0b;
-    --danger: #ef4444;
-    --text: #e2e8f0;
-    --text-muted: #64748b;
-    --text-dim: #94a3b8;
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --surface2: #f0f3f6;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --accent2: #1a7f37;
+    --accent3: #7d4e00;
+    --danger: #cf222e;
+    --text: #1a1f2e;
+    --text-muted: #57606a;
+    --text-dim: #424a53;
     --mono: 'JetBrains Mono', monospace;
-    --sans: 'Syne', sans-serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,15 +33,7 @@
     min-height: 100vh;
   }
 
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
+
 
   .container {
     max-width: 1100px;
@@ -82,7 +74,7 @@
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    color: #fff;
+    color: var(--text);
     margin-bottom: 12px;
   }
 
@@ -614,6 +606,19 @@
   #iter-chart, #minimal-chart { position: relative; }
   #iter-chart > div, #minimal-chart > div { min-width: 0; }
 
+
+  /* Light theme status colors */
+  .status-pass { color: #1a7f37 !important; }
+  .status-fail { color: #cf222e !important; }
+  .header-tag { color: #0969da; }
+  .header-tag::before { background: #0969da; }
+  /* Card shadows pe light */
+  .metric-card { box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .chart-card  { box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  /* Footer pe light */
+  footer { background: var(--surface2) !important; border-top: 1px solid var(--border); color: var(--text-muted); }
+  footer a { color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -622,7 +627,7 @@
 
   <!-- HEADER -->
   <header>
-    <div class="header-tag">Evaluation Report · Dizertatie2026</div>
+    <div class="header-tag">Evaluation Report · Disertatie2026</div>
     <h1>Agentic CI/CD Remediation<br>with Claude Sonnet&nbsp;4.6</h1>
     <p class="subtitle">devops-agent-demo · mariancap/devops-agent-demo · Week 3 Complete</p>
     <div class="meta-row">
@@ -1684,7 +1689,7 @@
 
   <footer>
     <div style="margin-bottom:8px;">devops-agent-demo · mariancap/devops-agent-demo</div>
-    <div>Generated: 2026-06-03 · week-3-complete · Claude Sonnet 4.6</div>
+    <div>Generated: 2026-07-04 · week-3-complete · Claude Sonnet 4.6</div>
   </footer>
 
 </div>
