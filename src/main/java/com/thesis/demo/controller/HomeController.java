@@ -17,33 +17,37 @@ public class HomeController {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>devops-agent-demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0d1117; color: #e6edf3; font-family: 'JetBrains Mono', 'Fira Code', monospace; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-  .container { max-width: 720px; width: 100%; }
-  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 12px; border-radius: 20px; background: rgba(35,134,54,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); margin-bottom: 1.5rem; font-family: sans-serif; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: #3fb950; animation: pulse 2s infinite; }
+  body { background: #f6f8fa; color: #1a1f2e; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .container { max-width: 740px; width: 100%; background: #ffffff; border-radius: 12px; border: 1px solid #d0d7de; padding: 2.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; background: #dafbe1; color: #1a7f37; border: 1px solid #aceebb; margin-bottom: 1.5rem; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a7f37; animation: pulse 2s infinite; flex-shrink: 0; }
   @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
-  h1 { font-size: 28px; font-weight: 600; margin-bottom: 0.5rem; color: #e6edf3; }
-  .subtitle { font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 2rem; font-family: sans-serif; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 0.4rem; color: #1a1f2e; letter-spacing: -.3px; }
+  .subtitle { font-size: 14px; color: #57606a; line-height: 1.6; margin-bottom: 2rem; }
   .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 2rem; }
-  .metric { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem 1.25rem; }
-  .metric-label { font-size: 11px; color: #8b949e; margin-bottom: 8px; font-family: sans-serif; text-transform: uppercase; letter-spacing: .05em; }
-  .metric-value { font-size: 26px; font-weight: 600; color: #e6edf3; }
-  .metric-sub { font-size: 12px; color: #8b949e; margin-top: 4px; font-family: sans-serif; }
-  .section-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: .05em; font-family: sans-serif; margin-bottom: 10px; }
+  .metric { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 8px; padding: 1rem 1.25rem; }
+  .metric-label { font-size: 11px; font-weight: 600; color: #57606a; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+  .metric-value { font-size: 28px; font-weight: 700; color: #1a1f2e; letter-spacing: -.5px; }
+  .metric-value.accent { color: #0969da; }
+  .metric-sub { font-size: 12px; color: #57606a; margin-top: 3px; }
+  .section-label { font-size: 11px; font-weight: 600; color: #57606a; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
   .endpoints { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2rem; }
-  .endpoint { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161b22; border: 1px solid #30363d; border-radius: 6px; font-size: 13px; }
-  .method { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px; min-width: 50px; text-align: center; font-family: sans-serif; }
-  .get { background: rgba(31,111,235,.15); color: #79c0ff; border: 1px solid rgba(31,111,235,.3); }
-  .post { background: rgba(35,134,54,.15); color: #3fb950; border: 1px solid rgba(35,134,54,.3); }
-  .patch { background: rgba(187,128,9,.15); color: #e3b341; border: 1px solid rgba(187,128,9,.3); }
-  .path { flex: 1; color: #e6edf3; }
-  .desc { font-size: 12px; color: #8b949e; font-family: sans-serif; }
-  .footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1.5rem; border-top: 1px solid #30363d; font-size: 12px; color: #8b949e; font-family: sans-serif; }
-  .footer a { color: #79c0ff; text-decoration: none; }
+  .endpoint { display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; font-size: 13px; }
+  .method { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; min-width: 52px; text-align: center; font-family: 'SF Mono', 'Fira Code', monospace; }
+  .get  { background: #ddf4ff; color: #0550ae; border: 1px solid #a5d6fb; }
+  .post { background: #dafbe1; color: #1a7f37; border: 1px solid #aceebb; }
+  .patch{ background: #fff8c5; color: #7d4e00; border: 1px solid #f5c518; }
+  .path { flex: 1; color: #1a1f2e; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; }
+  .desc { font-size: 12px; color: #57606a; }
+  .footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1.5rem; border-top: 1px solid #d0d7de; font-size: 12px; color: #57606a; }
+  .footer a { color: #0969da; text-decoration: none; font-weight: 500; }
   .footer a:hover { text-decoration: underline; }
-  .thesis-tag { background: rgba(188,140,255,.15); color: #d2a8ff; border: 1px solid rgba(188,140,255,.3); padding: 3px 10px; border-radius: 4px; font-size: 11px; }
+  .thesis-tag { background: #fbefff; color: #8250df; border: 1px solid #d8b9f8; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  @media (max-width: 520px) { .metrics { grid-template-columns: 1fr; } .container { padding: 1.5rem; } h1 { font-size: 20px; } }
 </style>
 </head>
 <body>
@@ -55,7 +59,7 @@ public class HomeController {
   <div class="metrics">
     <div class="metric">
       <div class="metric-label">Agent success rate</div>
-      <div class="metric-value">96.4%</div>
+      <div class="metric-value accent">96.4%</div>
       <div class="metric-sub">27 / 28 scenarios</div>
     </div>
     <div class="metric">
