@@ -39,3 +39,10 @@ script.sh
 .eval_worktrees/
 .eval_worktrees/
 agent/eval_logs/
+
+### extra ignore (curatenie) ###
+agent/logs/audit_*.jsonl
+__pycache__/
+*.pyc
+*.bak
+*:Zone.Identifier
