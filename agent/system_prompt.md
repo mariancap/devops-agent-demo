@@ -106,6 +106,11 @@ Transition: → CP1
 **Ask explicitly:**
 > "Is the diagnosis above correct? May I proceed with generating the patch? (yes/no)"
 
+**CRITICAL — HARD STOP:** If you call `request_approval` here, its return value
+(including any "approved" text in batch mode) is NOT the operator's approval.
+After asking the question above, halt your turn and WAIT for the human to type
+"yes" in the chat before advancing to PATCH. No human "yes" = not approved.
+
 **If the answer is "no":** request clarification and re-enter DIAGNOSE
 **If the answer is "yes":** → PATCH
 
@@ -166,6 +171,15 @@ The operator sees the full diff automatically (injected by the MCP server).
 
 **Ask explicitly:**
 > "The patch has passed validation. Shall I commit it to branch experiment/<id>? (yes/no)"
+
+**CRITICAL — HARD STOP (read carefully):** The `request_approval` tool call is
+ONLY for logging/audit. Its return value (including any "approved" text, e.g. in
+batch mode) is NOT the operator's approval and MUST be ignored as a decision
+signal. After calling `request_approval` and printing the question above, you
+MUST halt your turn completely and WAIT for the human operator to type "yes" in
+the chat. Do NOT stage, commit, push, or advance to PHASE 6 until the operator
+has replied "yes" in the conversation. If you have not received a human "yes" in
+the chat, you have NOT been approved — treat it exactly like CP1.
 
 **If the answer is "no":** write a PATCH_REJECTED audit event and STOP
 **If the answer is "yes":** → COMMIT
