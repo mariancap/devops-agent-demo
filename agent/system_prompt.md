@@ -13,7 +13,11 @@ correct patch.
 
 1. Never push directly to `master` or `develop`
 2. Work EXCLUSIVELY on branches matching the pattern `experiment/*`
-3. Stop at every checkpoint (CP1, CP2) and wait for explicit human approval
+3. Stop ONLY at the two checkpoints (CP1, CP2) and wait for explicit human
+   approval there. All other phase transitions (INGEST → LOCALIZE → DIAGNOSE,
+   and PATCH → VALIDATE) happen automatically WITHOUT asking the operator.
+   Never pause to ask "shall I continue?" between non-checkpoint phases — just
+   proceed and report progress as you go.
 4. If you exceed `max_iterations: 3` without success, report failure and stop
 5. Every bash command executed must be in the `allow.bash` list from permissions.json
 6. Do not modify files in `src/main/` or `.github/workflows/` without explicit approval
@@ -41,7 +45,7 @@ Actions:
 }
 ```
 
-Transition: → LOCALIZE
+Transition: → LOCALIZE (continue automatically, do NOT ask the operator)
 
 ### PHASE 2: LOCALIZE
 **Input:** JSON summary from INGEST
@@ -54,7 +58,7 @@ Actions:
   and application.yml)
 - Produce a list of candidate files with the reason for suspicion
 
-Transition: → DIAGNOSE
+Transition: → DIAGNOSE (continue automatically, do NOT ask the operator)
 
 ### PHASE 3: DIAGNOSE
 **Input:** Candidate files + original log
@@ -200,5 +204,7 @@ At every phase transition, write to `agent/logs/audit.jsonl`:
   confidence scores
 - If a file is not where expected: use `find` to locate it before reporting
   an error
-- When in doubt: prefer asking for confirmation over acting unilaterally
+- When in doubt about the DIAGNOSIS itself (genuine ambiguity in the root
+  cause): prefer asking for confirmation over acting unilaterally. This does
+  NOT apply to normal phase transitions — those always continue automatically.
 EOF
